@@ -4,7 +4,7 @@ from torchvision import transforms
 from typing import List
 
 class VariationalDiffusers:
-    def __init__(self, image: Image.Image) -> None:
+    def __init__(self) -> None:
         """
         Initialisation of the variational diffusers model.
         """
@@ -14,11 +14,8 @@ class VariationalDiffusers:
         # loading model into (graphic) memory
         self.pipe = StableDiffusionImageVariationPipeline.from_pretrained(self.model_name, revision="v2.0")
         self.pipe = self.pipe.to("cuda:0")
-
-        # getting base image
-        self.base_image = image
     
-    def __call__(self, num_images=5) -> List[Image.Image]:
+    def __call__(self, base_image: Image.Image, num_images=3) -> List[Image.Image]:
         """
         Calling an object of a class will result in getting pictures based on test_picture.
         """
@@ -36,12 +33,7 @@ class VariationalDiffusers:
         ])
 
         # transform test picture and load to graphic memory
-        inp = tform(self.base_image).to("cuda:0").unsqueeze(0)
-
-        # just for logging
-        # TODO: remove after testing
-        out = self.pipe(inp, guidance_scale=3)
-        out["images"][0].save("result.jpg")
+        inp = tform(base_image).to("cuda:0").unsqueeze(0)
 
         # making a list of pictures based on a test one
         images = []
