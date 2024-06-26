@@ -4,7 +4,7 @@ from InitialDiffusion import DiffusionModel
 from VariationalDiffusers import VariationalDiffusers
 from PIL import Image
 
-class Pipeline:
+class PromtToImgPipeline:
     
     def __init__(self) -> None:
         """
@@ -24,7 +24,7 @@ class Pipeline:
 
         return image, variants
 
-"""
+
 # testing block
 # ставьте filepath вне гит репа, иначе будет PermissionError: [Errno 13] Permission denied: 'img.png'
 
@@ -36,4 +36,4 @@ filepath = 'images/'
 image.save(filepath + 'img.png')
 for i in range(len(variants)):
      variants[i].save(filepath + 'img_' + str(i) + '.png')
-"""
+

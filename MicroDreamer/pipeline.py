@@ -1,7 +1,7 @@
 import argparse
 import subprocess
 
-class CommandRunner:
+class ImgTo3dPipeline:
     def __call__(self, name, size):
         self.run_commands(name, size)
 
@@ -29,5 +29,5 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    runner = CommandRunner()
+    runner = ImgTo3dPipeline()
     runner(args.name, args.size)

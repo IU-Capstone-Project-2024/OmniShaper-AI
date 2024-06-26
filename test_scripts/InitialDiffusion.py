@@ -12,7 +12,7 @@ class DiffusionModel:
 
         # loading model into (graphic) memory
         self.pipe = StableDiffusionPipeline.from_pretrained(self.model_name, torch_dtype=torch.float16)
-        self.pipe = self.pipe.to("cuda")
+        self.pipe = self.pipe
     
     def __call__(self, prompt: str) -> Image.Image:
         """
