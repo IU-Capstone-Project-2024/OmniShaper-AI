@@ -13,7 +13,7 @@ class VariationalDiffusers:
 
         # loading model into (graphic) memory
         self.pipe = StableDiffusionImageVariationPipeline.from_pretrained(self.model_name, revision="v2.0")
-        self.pipe = self.pipe
+        self.pipe = self.pipe.to("cuda:0")
     
     def __call__(self, base_image: Image.Image, num_images=3) -> List[Image.Image]:
         """
@@ -33,7 +33,7 @@ class VariationalDiffusers:
         ])
 
         # transform test picture and load to graphic memory
-        inp = tform(base_image).unsqueeze(0)
+        inp = tform(base_image).to("cuda:0").unsqueeze(0)
 
         # making a list of pictures based on a test one
         images = []
