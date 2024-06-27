@@ -13,3 +13,6 @@ python -m venv venv
 source venv/bin/activate
 ./scripts/install-requirements.sh
 ```
+
+### Usage
+Run `python -c "from ml_pipeline.pipeline import promt_to_3D; promt_to_3D('Your prompt')" `
