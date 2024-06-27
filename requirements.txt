@@ -28,5 +28,4 @@ xatlas
 trimesh
 PyMCubes
 pymeshlab
-2
 rembg[gpu,cli]
