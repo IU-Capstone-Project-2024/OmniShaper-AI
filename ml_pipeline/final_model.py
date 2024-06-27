@@ -3,14 +3,20 @@ from MicroDreamer.pipeline import ImgTo3dPipeline
 import os
 import torch
 import gc
-def promt_to_3D(promt) -> str:
+import random
+import string
+
+def promt_to_3D(promt, filename=None) -> str:
     promt_to_img = PromtToImgPipeline()
     #image, variants = promt_to_img(promt)
     image = promt_to_img(promt)
 
     filepath = 'images/'
 
-    image.save(filepath + 'img.png')
+    if filename is None:
+        filename = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(8))
+        print(f'Filename generated: {filename}')
+    image.save(filepath + f'{filename}.png')
     #for i in range(len(variants)):
     #   variants[i].save(filepath + 'img_' + str(i) + '.png')
 
@@ -21,4 +27,4 @@ def promt_to_3D(promt) -> str:
     img_to_3d = ImgTo3dPipeline()
 
     os.chdir('MicroDreamer')
-    img_to_3d('images/img.png', 512)
+    img_to_3d(f'images/{filename}.png', 512)
