@@ -13,7 +13,7 @@ class ImgTo3dPipeline:
         # Derive the inputs for the next commands
         name_rgba = '../' + name.replace('.png', '_rgba.png')
         # Need to add folder input
-        save_path = name.replace('images/', '').replace('.png', '')
+        save_path = name.replace('data/images/', '').replace('.png', '')
         save_path = save_path.split('/')[-1]
         save_path = save_path.split('\\')[-1]
         # Run the second command
