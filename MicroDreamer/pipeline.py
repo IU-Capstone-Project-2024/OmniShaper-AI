@@ -14,7 +14,8 @@ class ImgTo3dPipeline:
         name_rgba = '../' + name.replace('.png', '_rgba.png')
         # Need to add folder input
         save_path = name.replace('images/', '').replace('.png', '')
-
+        save_path = save_path.split('/')[-1]
+        save_path = save_path.split('\\')[-1]
         # Run the second command
         subprocess.run(
             ['python', 'main.py', '--config', 'configs/image_sai.yaml', f'input={name_rgba}', f'save_path={save_path}'])

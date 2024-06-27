@@ -26,8 +26,17 @@ def promt_to_3D(promt, filename=None) -> str:
 
     img_to_3d = ImgTo3dPipeline()
 
-    os.chdir('MicroDreamer')
+    current_dir = os.getcwd()
+
+    # Define the target directory
+    target_dir = 'MicroDreamer'
+
+    # Change the directory only if the current directory is not the target directory
+    if os.path.basename(current_dir) != target_dir:
+        os.chdir(target_dir)
 
     img_to_3d(f'data/images/{filename}.png', 512)
-    
+
+    if os.path.basename(current_dir) == target_dir:
+        os.chdir('..')
     return f'data/3d_models/{filename}.obj'
