@@ -1,7 +1,7 @@
 from typing import Any
-from LLM import LLM
-from InitialDiffusion import DiffusionModel
-from VariationalDiffusers import VariationalDiffusers
+from Diffusion.LLM import LLM
+from Diffusion.InitialDiffusion import DiffusionModel
+from Diffusion.VariationalDiffusers import VariationalDiffusers
 from PIL import Image
 
 class PromtToImgPipeline:
@@ -28,12 +28,12 @@ class PromtToImgPipeline:
 # testing block
 # ставьте filepath вне гит репа, иначе будет PermissionError: [Errno 13] Permission denied: 'img.png'
 
-pipe =  Pipeline()
-image, variants = pipe('house')
+# pipe =  Pipeline()
+# image, variants = pipe('house')
 
-filepath = 'images/'
+# filepath = 'images/'
 
-image.save(filepath + 'img.png')
-for i in range(len(variants)):
-     variants[i].save(filepath + 'img_' + str(i) + '.png')
+# image.save(filepath + 'img.png')
+# for i in range(len(variants)):
+#      variants[i].save(filepath + 'img_' + str(i) + '.png')
 

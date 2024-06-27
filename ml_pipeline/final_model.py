@@ -1,4 +1,4 @@
-from test_scripts.pipeline import PromtToImgPipeline
+from Diffusion.pipeline import PromtToImgPipeline
 from MicroDreamer.pipeline import ImgTo3dPipeline
 import os
 import torch
