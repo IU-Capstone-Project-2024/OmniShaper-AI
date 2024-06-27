@@ -29,3 +29,5 @@ def promt_to_3D(promt, filename=None) -> str:
     os.chdir('MicroDreamer')
 
     img_to_3d(f'data/images/{filename}.png', 512)
+    
+    return f'data/3d_models/{filename}.obj'
