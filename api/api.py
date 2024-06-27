@@ -49,7 +49,7 @@ def download_obj(file_id: UUID | str) -> StreamingResponse:
     # The issue is probably because the swagger UI which I used to test functionality
     # Tried to show me the file as text, which is enormous in itself.
 
-    filepath = "../data/3d_models/" + str(file_id) + "_mesh.obj"
+    filepath = "data/3d_models/" + str(file_id) + "_mesh.obj"
     
     if not Path(filepath).exists():
         raise HTTPException(
@@ -65,7 +65,7 @@ def download_mtl(file_id: UUID| str) -> FileResponse:
     Endpoint "/download/obj" allows user to download a given .mtl file by its id
     '''
     
-    filepath = "../data/3d_models/" + str(file_id) + "_mesh.mtl"
+    filepath = "data/3d_models/" + str(file_id) + "_mesh.mtl"
     
     if not Path(filepath).exists():
         raise HTTPException(
@@ -81,7 +81,7 @@ def download_png(file_id: UUID | str) -> FileResponse:
     Endpoint "/download/obj" allows user to download a given .png file by its id
     '''
     
-    filepath = "../data/3d_models/" + str(file_id) + "_mesh_albedo.png"
+    filepath = "data/3d_models/" + str(file_id) + "_mesh_albedo.png"
     
     if not Path(filepath).exists():
         raise HTTPException(
