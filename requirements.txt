@@ -2,3 +2,4 @@ diffusers
 transformers
 torch
 torchvision
+FastApi
