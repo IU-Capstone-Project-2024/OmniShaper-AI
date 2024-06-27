@@ -1,3 +1,4 @@
 /MicroDreamer/*
 !/MicroDreamer/pipeline.py
+!/MicroDreamer/configs
 /.idea

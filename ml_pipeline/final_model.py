@@ -11,7 +11,7 @@ def promt_to_3D(promt, filename=None) -> str:
     #image, variants = promt_to_img(promt)
     image = promt_to_img(promt)
 
-    filepath = 'images/'
+    filepath = 'data/images/'
 
     if filename is None:
         filename = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(8))
@@ -27,4 +27,5 @@ def promt_to_3D(promt, filename=None) -> str:
     img_to_3d = ImgTo3dPipeline()
 
     os.chdir('MicroDreamer')
-    img_to_3d(f'images/{filename}.png', 512)
+
+    img_to_3d(f'data/images/{filename}.png', 512)
