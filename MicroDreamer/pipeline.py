@@ -1,6 +1,6 @@
 import argparse
 import subprocess
-
+import trimesh
 
 class ImgTo3dPipeline:
     def __call__(self, name, size):
@@ -25,6 +25,8 @@ class ImgTo3dPipeline:
             ['python', 'main2.py', '--config', 'configs/image_sai.yaml', f'input={name_rgba}',
              f'save_path={save_path}'])
 
+        model = trimesh.load(f'../data/3d_models/{save_path}_mesh.obj')
+        model.export(f'../data/3d_models/{save_path}_mesh.obj')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run a series of Python scripts with specified arguments.')
