@@ -1,6 +1,7 @@
 import argparse
 import subprocess
 import trimesh
+import os
 
 class ImgTo3dPipeline:
     def __call__(self, name, size):
@@ -27,6 +28,36 @@ class ImgTo3dPipeline:
 
         model = trimesh.load(f'../data/3d_models/{save_path}_mesh.obj')
         model.export(f'../data/3d_models/{save_path}_mesh.obj')
+        os.remove(f'../data/3d_models/{save_path}_mesh.mtl')
+        os.remove(f'../data/3d_models/{save_path}_mesh_albedo.png')
+        with open(f'../data/3d_models/{save_path}_mesh.obj', 'r') as file:
+            file_contents = file.read()
+
+        # Replace the old string with the new string
+        updated_contents = file_contents.replace('material0.mtl', save_path+'_mesh.mtl')
+        updated_contents = updated_contents.replace('material0', save_path+'_mesh')
+
+        # Write the modified contents back to the file
+        with open(f'../data/3d_models/{save_path}_mesh.obj', 'w') as file:
+            file.write(updated_contents)
+
+        with open(f'../data/3d_models/material0.mtl', 'r') as file:
+            file_contents = file.read()
+
+        # Replace the old string with the new string
+        updated_contents = file_contents.replace('material0.png', save_path+'_mesh_albedo.png')
+        updated_contents = updated_contents.replace('material0', save_path+'_mesh')
+
+        # Write the modified contents back to the file
+        with open(f'../data/3d_models/material0.mtl', 'w') as file:
+            file.write(updated_contents)
+
+        os.rename(f'../data/3d_models/material0.mtl',f'../data/3d_models/{save_path}_mesh.mtl')
+        os.rename(f'../data/3d_models/material0.png',f'../data/3d_models/{save_path}_mesh_albedo.png')
+        os.remove(f'../data/3d_models/{save_path}.obj')
+        os.remove(f'../data/3d_models/{save_path}.mtl')
+        os.remove(f'../data/3d_models/{save_path}_albedo.png')
+        #os.remove(f'../data/3d_models/{save_path}_albedo.png')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run a series of Python scripts with specified arguments.')
