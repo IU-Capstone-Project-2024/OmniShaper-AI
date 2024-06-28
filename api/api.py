@@ -29,7 +29,8 @@ def create_request(prompt: str) -> CreateRequestResponse:
 
     try:
         promt_to_3D(promt=prompt, filename=file_id)
-    except:
+    except Exception as e:
+        print(str(e))
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail="Error occured while creating 3D object.")
 

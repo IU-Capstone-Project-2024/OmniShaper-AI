@@ -37,6 +37,8 @@ def promt_to_3D(promt, filename=None) -> str:
 
     img_to_3d(f'data/images/{filename}.png', 512)
 
+    current_dir = os.getcwd()
     if os.path.basename(current_dir) == target_dir:
         os.chdir('..')
+    print(os.path.basename(os.getcwd()))
     return f'data/3d_models/{filename}.obj'
