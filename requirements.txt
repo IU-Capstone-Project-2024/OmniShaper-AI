@@ -19,7 +19,7 @@ plyfile
 pygltflib
 # for stable-diffusion
 huggingface_hub
-diffusers==0.25.0
+diffusers
 accelerate
 transformers
 trimesh
