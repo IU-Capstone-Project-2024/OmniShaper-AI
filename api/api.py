@@ -6,7 +6,7 @@ from pathlib import Path
 
 from .models import CreateRequestResponse
 from ml_pipeline.pipeline import promt_to_3D
-
+import os
 router = APIRouter()
 
 async def _get_data_from_file(filepath: str) -> AsyncGenerator:
@@ -30,6 +30,8 @@ def create_request(prompt: str) -> CreateRequestResponse:
     try:
         promt_to_3D(promt=prompt, filename=file_id)
     except Exception as e:
+        current_dir = os.getcwd()
+        print(os.path.basename(current_dir))
         print(str(e))
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail="Error occured while creating 3D object.")
