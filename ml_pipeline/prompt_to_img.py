@@ -4,6 +4,19 @@ import os
 
 
 def generate_images(prompt, n, request_id, negative_prompt="", num_inference_steps=30, guidance_scale=8):
+    """
+    This function generates images for a prompt.
+    Args:
+        prompt: text prompt
+        n: number of images to generate
+        request_id: unique id of request
+        negative_prompt:
+        num_inference_steps:
+        guidance_scale:
+
+    Returns:
+        Array of pil images. Also saves images to data/images/request_id/
+    """
     images = []
 
     # create an output folder
@@ -40,6 +53,3 @@ def generate_images(prompt, n, request_id, negative_prompt="", num_inference_ste
     del pipe
 
     return images
-
-
-generate_images('Dinosaur in sweater on white background', 3, 123)
