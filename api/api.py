@@ -3,10 +3,12 @@ from fastapi.responses import FileResponse, StreamingResponse
 from uuid import UUID, uuid4
 from typing import AsyncGenerator
 from pathlib import Path
+from typing import Union
 
 from .models import CreateRequestResponse
 from ml_pipeline.pipeline import promt_to_3D
 import os
+
 router = APIRouter()
 
 async def _get_data_from_file(filepath: str) -> AsyncGenerator:
@@ -39,7 +41,7 @@ def create_request(prompt: str) -> CreateRequestResponse:
     return CreateRequestResponse(file_id=file_id, prompt=prompt)
 
 @router.get("/download/obj", response_class=StreamingResponse)
-def download_obj(file_id: UUID | str) -> StreamingResponse:
+def download_obj(file_id: Union[UUID, str]) -> StreamingResponse:
     '''
     Endpoint "/download/obj" allows user to download a given .obj file by its id
     '''
@@ -66,7 +68,7 @@ def download_obj(file_id: UUID | str) -> StreamingResponse:
 
     return StreamingResponse(_get_data_from_file(filepath), headers=headers, media_type="model/obj")
 @router.get("/download/mtl", response_class=FileResponse)
-def download_mtl(file_id: UUID| str) -> FileResponse:
+def download_mtl(file_id: Union[UUID, str]) -> FileResponse:
     '''
     Endpoint "/download/obj" allows user to download a given .mtl file by its id
     '''
@@ -82,7 +84,7 @@ def download_mtl(file_id: UUID| str) -> FileResponse:
     return FileResponse(path=filepath, filename=f"{str(file_id)}_mesh.mtl", media_type="model/mtl")
 
 @router.get("/download/png", response_class=FileResponse)
-def download_png(file_id: UUID | str) -> FileResponse:
+def download_png(file_id: Union[UUID, str]) -> FileResponse:
     '''
     Endpoint "/download/obj" allows user to download a given .png file by its id
     '''

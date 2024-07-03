@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from uuid import UUID, uuid4
+from uuid import UUID
 
 class CreateRequestResponse(BaseModel):
     prompt: str
