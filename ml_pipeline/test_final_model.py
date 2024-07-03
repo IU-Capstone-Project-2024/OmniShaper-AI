@@ -1,4 +1,3 @@
-from Diffusion.pipeline import PromtToImgPipeline
 from MicroDreamer.pipeline import ImgTo3dPipeline
 import os
 import torch

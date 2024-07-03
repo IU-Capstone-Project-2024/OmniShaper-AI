@@ -23,4 +23,8 @@ def prompt_to_img(prompt, negative_prompt="", num_inference_steps=30, guidance_s
     del pipe
     return image
 
-prompt_to_img('dinosaur in sweater on white background').save('aboba.png')
+def pipe(n, prompt, negative_prompt="", num_inference_steps=30, guidance_scale=8):
+    images = []
+    for i in range(n):
+        images.append(prompt_to_img(prompt, negative_prompt, num_inference_steps, guidance_scale))
+    return images
