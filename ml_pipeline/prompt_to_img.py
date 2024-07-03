@@ -21,7 +21,7 @@ def generate_images(prompt, n, request_id, negative_prompt="", num_inference_ste
 
     # create an output folder
     try:
-        os.mkdir(f"../data/images/{request_id}")
+        os.mkdir(f"data/images/{request_id}")
     except FileExistsError:
         pass
 
@@ -47,7 +47,7 @@ def generate_images(prompt, n, request_id, negative_prompt="", num_inference_ste
                 guidance_scale=guidance_scale,
             ).images[0]
         )
-        images[-1].save(f"../data/images/{request_id}/{i}.png")
+        images[-1].save(f"data/images/{request_id}/{i}.png")
 
     # clear cuda memory by deleting a pipe
     del pipe
