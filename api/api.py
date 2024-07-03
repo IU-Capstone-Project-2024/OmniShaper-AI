@@ -4,10 +4,12 @@ from uuid import UUID, uuid4
 from typing import AsyncGenerator
 from pathlib import Path
 from typing import Union
-
-from .models import CreateRequestResponse
-from ml_pipeline.pipeline import promt_to_3D
 import os
+
+from .models import Create3DRequestResponse, Create2DRequestResponse
+from ml_pipeline.pipeline import promt_to_3D
+from ml_pipeline.prompt_to_img import generate_images
+
 
 router = APIRouter()
 
@@ -20,8 +22,62 @@ async def _get_data_from_file(filepath: str) -> AsyncGenerator:
         yield file_like.read()
 
 
-@router.get("/request", response_model=CreateRequestResponse)
-def create_request(prompt: str) -> CreateRequestResponse:
+@router.get("/request/2D/{prompt}", response_model=Create2DRequestResponse)
+def gen_img_default(prompt: str) -> Create2DRequestResponse:
+    '''
+    endpoint "/request/2D/{prompt}" takes one path parameter:
+    -prompt: user prompt
+    '''
+
+    num = 3
+    
+    if not num > 0:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="The number must be an integer and bigger than 0."
+            )
+    
+    request_id = uuid4()
+    
+    try:
+        generate_images(prompt=prompt, n=num)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error occured while generating images. Try again later."
+            )
+
+    return Create2DRequestResponse(prompt=prompt, num=num, request_id=request_id)
+
+
+@router.get("/request/2D/{prompt}/{num}", response_model=Create2DRequestResponse)
+def gen_img(prompt: str, num: int) -> Create2DRequestResponse:
+    '''
+    endpoint "/request/2D/{prompt}{num}" takes two path parameters:
+    -prompt: user prompt
+    -num: number of generated images to choose from, default=3
+    '''
+    
+    if not num > 0:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="The number must be an integer and bigger than 0"
+            )
+    
+    request_id = uuid4()
+    
+    try:
+        generate_images(prompt=prompt, n=num)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error occured while generating images. Try again later."
+            )
+    
+    return Create2DRequestResponse(prompt=prompt, num=num, request_id=request_id)
+
+@router.get("/request/3D/{prompt}", response_model=Create3DRequestResponse)
+def create_request(prompt: str) -> Create3DRequestResponse:
     '''
     The endpint "/request/{prompt}" takes user input, generates file_id, initiates 3D generating process
     and returns assigned file_id with the used prompt.
@@ -36,9 +92,9 @@ def create_request(prompt: str) -> CreateRequestResponse:
         print(os.path.basename(current_dir))
         print(str(e))
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail="Error occured while creating 3D object.")
+                            detail="Error occured while creating 3D object. Try again later.")
 
-    return CreateRequestResponse(file_id=file_id, prompt=prompt)
+    return Create3DRequestResponse(file_id=file_id, prompt=prompt)
 
 @router.get("/download/obj", response_class=StreamingResponse)
 def download_obj(file_id: Union[UUID, str]) -> StreamingResponse:
