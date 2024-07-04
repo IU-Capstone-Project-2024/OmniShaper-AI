@@ -6,9 +6,9 @@ from pathlib import Path
 from typing import Union
 from PIL import Image
 
-from .models import Create3DRequestResponse, Create2DRequestResponse
+from .models import Create223DRequestResponse, Create2DRequestResponse
 from ml_pipeline.debug_prompt_to_img import generate_images
-
+from ml_pipeline.debug_img_to_3d import generate_3d_model
 
 router = APIRouter()
 
@@ -45,7 +45,7 @@ def gen_img_default(prompt: str) -> Create2DRequestResponse:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error occured while generating images. Try again later."
             )
-    imgs = [Image.open("data/images/" + str(request_id) + f"/{str(i)}.png") for i in range(num)]
+    imgs = [(Image.open("data/images/" + str(request_id) + f"/{str(i)}.png"), i) for i in range(num)]
     return Create2DRequestResponse(
         prompt=prompt,
         num=num,
@@ -77,13 +77,28 @@ def gen_img(prompt: str, num: int) -> Create2DRequestResponse:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error occured while generating images. Try again later."
             )
-    imgs = [Image.open("data/images/" + str(request_id) + f"/{str(i)}.png") for i in range(num)]
+    imgs = [(Image.open("data/images/" + str(request_id) + f"/{str(i)}.png"), i) for i in range(num)]
     return Create2DRequestResponse(
         prompt=prompt,
         num=num,
         request_id=request_id,
         imgs=imgs
         )
+
+@router.get("/request/3D/{request_id}/{num}", response_model=Create223DRequestResponse)
+def img_to_3d_request(request_id: Union[UUID, str], num: int):
+    
+    filepath = f"data/images/{str(request_id)}/{str(int)}"
+
+    if not Path(filepath).exists():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Requested file does not exist."
+        )
+    
+    generate_3d_model(request_id=request_id, image_id=num)
+
+    return Create223DRequestResponse(request_id=request_id, image_id=num)
 
 @router.get("/download/obj", response_class=StreamingResponse)
 def download_obj(request_id: Union[UUID, str]) -> StreamingResponse:
@@ -112,6 +127,8 @@ def download_obj(request_id: Union[UUID, str]) -> StreamingResponse:
     }
 
     return StreamingResponse(_get_data_from_file(filepath), headers=headers, media_type="model/obj")
+
+
 @router.get("/download/mtl/{request_id}/{num}", response_class=FileResponse)
 def download_mtl(request_id: Union[UUID, str]) -> FileResponse:
     '''
