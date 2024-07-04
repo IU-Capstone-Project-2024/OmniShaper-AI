@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 from typing import AsyncGenerator
 from pathlib import Path
 from typing import Union
-import os
+from PIL import Image
 
 from .models import Create3DRequestResponse, Create2DRequestResponse
 from ml_pipeline.debug_prompt_to_img import generate_images
@@ -45,8 +45,13 @@ def gen_img_default(prompt: str) -> Create2DRequestResponse:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error occured while generating images. Try again later."
             )
-
-    return Create2DRequestResponse(prompt=prompt, num=num, request_id=request_id)
+    imgs = [Image.open("data/images/" + str(request_id) + f"/{str(i)}.png") for i in range(num)]
+    return Create2DRequestResponse(
+        prompt=prompt,
+        num=num,
+        request_id=request_id,
+        imgs=imgs
+        )
 
 
 @router.get("/request/2D/{prompt}/{num}", response_model=Create2DRequestResponse)
@@ -72,28 +77,13 @@ def gen_img(prompt: str, num: int) -> Create2DRequestResponse:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error occured while generating images. Try again later."
             )
-    
-    return Create2DRequestResponse(prompt=prompt, num=num, request_id=request_id)
-
-# @router.get("/request/3D/{prompt}", response_model=Create3DRequestResponse)
-# def create_request(prompt: str) -> Create3DRequestResponse:
-#     '''
-#     The endpint "/request/{prompt}" takes user input, generates file_id, initiates 3D generating process
-#     and returns assigned file_id with the used prompt.
-#     '''
-#
-#     file_id = uuid4()
-#
-#     try:
-#         promt_to_3D(promt=prompt, filename=file_id)
-#     except Exception as e:
-#         current_dir = os.getcwd()
-#         print(os.path.basename(current_dir))
-#         print(str(e))
-#         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#                             detail="Error occured while creating 3D object. Try again later.")
-#
-#     return Create3DRequestResponse(file_id=file_id, prompt=prompt)
+    imgs = [Image.open("data/images/" + str(request_id) + f"/{str(i)}.png") for i in range(num)]
+    return Create2DRequestResponse(
+        prompt=prompt,
+        num=num,
+        request_id=request_id,
+        imgs=imgs
+        )
 
 @router.get("/download/obj", response_class=StreamingResponse)
 def download_obj(request_id: Union[UUID, str]) -> StreamingResponse:
@@ -109,7 +99,7 @@ def download_obj(request_id: Union[UUID, str]) -> StreamingResponse:
     # The issue is probably because the swagger UI which I used to test functionality
     # Tried to show me the file as text, which is enormous in itself.
 
-    filepath = "data/3d_models/" + str(request_id) + "/refined_mesh.obj"
+    filepath = "data/3d_models/" + str(request_id) + "/refined.obj"
     
     if not Path(filepath).exists():
         raise HTTPException(
@@ -123,12 +113,12 @@ def download_obj(request_id: Union[UUID, str]) -> StreamingResponse:
 
     return StreamingResponse(_get_data_from_file(filepath), headers=headers, media_type="model/obj")
 @router.get("/download/mtl/{request_id}/{num}", response_class=FileResponse)
-def download_mtl(request_id: Union[UUID, str], num: int) -> FileResponse:
+def download_mtl(request_id: Union[UUID, str]) -> FileResponse:
     '''
     Endpoint "/download/obj" allows user to download a given .mtl file by its id
     '''
     
-    filepath = "data/3d_models/" + str(request_id) + "/refined_mesh.mtl"
+    filepath = "data/3d_models/" + str(request_id) + "/refined.mtl"
     
     if not Path(filepath).exists():
         raise HTTPException(
@@ -139,16 +129,16 @@ def download_mtl(request_id: Union[UUID, str], num: int) -> FileResponse:
     return FileResponse(path=filepath, filename="refined_mesh.mtl", media_type="model/mtl")
 
 @router.get("/download/png/{request_id}/{num}", response_class=FileResponse)
-def download_png(request_id: Union[UUID, str], num: int) -> FileResponse:
+def download_png(request_id: Union[UUID, str]) -> FileResponse:
     '''
     Endpoint "/download/obj" allows user to download a given .png file by its id
     '''
     
-    filepath = "data/3d_models/" + str(request_id) + f"/{str(num)}_mesh_albedo.png"
+    filepath = "data/3d_models/" + str(request_id) + "/refined_albedo.png"
     
     if not Path(filepath).exists():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Specified file does not exist"
             )
-    return FileResponse(path=filepath, filename=f"{str(num)}_mesh_albedo.png", media_type="image/png")
+    return FileResponse(path=filepath, filename="refined_albedo.png", media_type="image/png")
