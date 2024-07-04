@@ -26,8 +26,7 @@ class ImgTo3dPipeline:
 
         # Run the third command
         subprocess.run(
-            ['python', 'main2.py', '--config', 'configs/image_sai.yaml', f'input={name_rgba}',
-             f'save_path={save_path}'])
+            ['python', 'main2.py', '--config', 'configs/image_sai.yaml', f'input={name_rgba}', f'save_path={save_path}'])
 
 
 if __name__ == '__main__':
