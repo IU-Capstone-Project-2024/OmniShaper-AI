@@ -5,12 +5,26 @@ from typing import AsyncGenerator
 from pathlib import Path
 from typing import Union
 from PIL import Image
+import base64
+from io import BytesIO
 
 from .models import Create223DRequestResponse, Create2DRequestResponse
 from ml_pipeline.debug_prompt_to_img import generate_images
 from ml_pipeline.debug_img_to_3d import generate_3d_model
 
 router = APIRouter()
+
+def _image_to_base64(image_path):
+    # Open the image file
+    with Image.open(image_path) as img:
+        # Convert the image to a byte array
+        buffered = BytesIO()
+        img.save(buffered, format="PNG")
+        img_byte_array = buffered.getvalue()
+
+        # Encode the byte array using base64
+        img_base64 = base64.b64encode(img_byte_array).decode('utf-8')
+        return img_base64
 
 async def _get_data_from_file(filepath: str) -> AsyncGenerator:
     '''
@@ -36,7 +50,8 @@ def gen_img_default(prompt: str) -> Create2DRequestResponse:
             detail="The number must be an integer and bigger than 0."
             )
     
-    request_id = uuid4()
+    # request_id = uuid4() actual
+    request_id = 312 # test
     
     try:
         generate_images(prompt=prompt, n=num, request_id=str(request_id))
@@ -45,12 +60,14 @@ def gen_img_default(prompt: str) -> Create2DRequestResponse:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error occured while generating images. Try again later."
             )
-    imgs = [(Image.open("data/images/" + str(request_id) + f"/{str(i)}.png"), i) for i in range(num)]
+    
+    images = [_image_to_base64("data/images/" + str(request_id) + f"/{str(i)}.png") for i in range(num)]
+    
     return Create2DRequestResponse(
         prompt=prompt,
         num=num,
         request_id=request_id,
-        imgs=imgs
+        images=images
         )
 
 
@@ -77,12 +94,14 @@ def gen_img(prompt: str, num: int) -> Create2DRequestResponse:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error occured while generating images. Try again later."
             )
-    imgs = [(Image.open("data/images/" + str(request_id) + f"/{str(i)}.png"), i) for i in range(num)]
+    
+    images = [_image_to_base64("data/images/" + str(request_id) + f"/{str(i)}.png") for i in range(num)]
+    
     return Create2DRequestResponse(
         prompt=prompt,
         num=num,
         request_id=request_id,
-        imgs=imgs
+        images=images
         )
 
 @router.get("/request/3D/{request_id}/{num}", response_model=Create223DRequestResponse)
