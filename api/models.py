@@ -3,11 +3,11 @@ from uuid import UUID
 from PIL import Image
 from io import BytesIO
 import base64
-from typing import List
+from typing import List, Union
 
 class Create2DRequestResponse(BaseModel):
     prompt: str
-    request_id: UUID
+    request_id: Union[UUID, str, int]
     num: int
     images: List[str]
 
@@ -28,5 +28,5 @@ class Create2DRequestResponse(BaseModel):
 
 class Create223DRequestResponse(BaseModel):
     # TODO: decide on the implementation
-    request_id: UUID
+    request_id: Union[UUID, int, str]
     image_id: int
