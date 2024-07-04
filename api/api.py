@@ -96,7 +96,7 @@ def gen_img(prompt: str, num: int) -> Create2DRequestResponse:
 #     return Create3DRequestResponse(file_id=file_id, prompt=prompt)
 
 @router.get("/download/obj", response_class=StreamingResponse)
-def download_obj(file_id: Union[UUID, str]) -> StreamingResponse:
+def download_obj(request_id: Union[UUID, str]) -> StreamingResponse:
     '''
     Endpoint "/download/obj" allows user to download a given .obj file by its id
     '''
@@ -109,7 +109,7 @@ def download_obj(file_id: Union[UUID, str]) -> StreamingResponse:
     # The issue is probably because the swagger UI which I used to test functionality
     # Tried to show me the file as text, which is enormous in itself.
 
-    filepath = "data/3d_models/" + str(file_id) + "_mesh.obj"
+    filepath = "data/3d_models/" + str(request_id) + "/refined_mesh.obj"
     
     if not Path(filepath).exists():
         raise HTTPException(
@@ -118,7 +118,7 @@ def download_obj(file_id: Union[UUID, str]) -> StreamingResponse:
             )
 
     headers = {
-        'Content-Disposition': f'attachment; filename="{file_id}_mesh.obj"'
+        'Content-Disposition': f'attachment; filename="refined_mesh.obj"'
     }
 
     return StreamingResponse(_get_data_from_file(filepath), headers=headers, media_type="model/obj")
@@ -128,7 +128,7 @@ def download_mtl(request_id: Union[UUID, str], num: int) -> FileResponse:
     Endpoint "/download/obj" allows user to download a given .mtl file by its id
     '''
     
-    filepath = "data/3d_models/" + str(request_id) + f"/{str(num)}_mesh.mtl"
+    filepath = "data/3d_models/" + str(request_id) + "/refined_mesh.mtl"
     
     if not Path(filepath).exists():
         raise HTTPException(
@@ -136,7 +136,7 @@ def download_mtl(request_id: Union[UUID, str], num: int) -> FileResponse:
             detail="Specified file does not exist"
             )
     
-    return FileResponse(path=filepath, filename=f"{str(request_id)}_mesh.mtl", media_type="model/mtl")
+    return FileResponse(path=filepath, filename="refined_mesh.mtl", media_type="model/mtl")
 
 @router.get("/download/png/{request_id}/{num}", response_class=FileResponse)
 def download_png(request_id: Union[UUID, str], num: int) -> FileResponse:
