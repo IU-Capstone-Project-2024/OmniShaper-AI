@@ -107,7 +107,7 @@ def gen_img(prompt: str, num: int) -> Create2DRequestResponse:
 @router.get("/request/3D/{request_id}/{num}", response_model=Create223DRequestResponse)
 def img_to_3d_request(request_id: Union[UUID, str], num: int):
     
-    filepath = f"data/images/{str(request_id)}/{str(int)}"
+    filepath = f"data/images/{str(request_id)}/{str(num)}.png"
 
     if not Path(filepath).exists():
         raise HTTPException(
@@ -119,8 +119,9 @@ def img_to_3d_request(request_id: Union[UUID, str], num: int):
 
     return Create223DRequestResponse(request_id=request_id, image_id=num)
 
-@router.get("/download/obj", response_class=StreamingResponse)
-def download_obj(request_id: Union[UUID, str]) -> StreamingResponse:
+
+@router.get("/download/obj/{request_id}/{num}", response_class=StreamingResponse)
+def download_obj(request_id: Union[UUID, str], num: int) -> StreamingResponse:
     '''
     Endpoint "/download/obj" allows user to download a given .obj file by its id
     '''
@@ -133,7 +134,7 @@ def download_obj(request_id: Union[UUID, str]) -> StreamingResponse:
     # The issue is probably because the swagger UI which I used to test functionality
     # Tried to show me the file as text, which is enormous in itself.
 
-    filepath = "data/3d_models/" + str(request_id) + "/refined.obj"
+    filepath = "data/3d_models/" + str(request_id) + f"/{str(num)}/refined.obj"
     
     if not Path(filepath).exists():
         raise HTTPException(
@@ -142,19 +143,19 @@ def download_obj(request_id: Union[UUID, str]) -> StreamingResponse:
             )
 
     headers = {
-        'Content-Disposition': f'attachment; filename="refined_mesh.obj"'
+        'Content-Disposition': f'attachment; filename="refined.obj"'
     }
 
     return StreamingResponse(_get_data_from_file(filepath), headers=headers, media_type="model/obj")
 
 
 @router.get("/download/mtl/{request_id}/{num}", response_class=FileResponse)
-def download_mtl(request_id: Union[UUID, str]) -> FileResponse:
+def download_mtl(request_id: Union[UUID, str], num: int) -> FileResponse:
     '''
     Endpoint "/download/obj" allows user to download a given .mtl file by its id
     '''
     
-    filepath = "data/3d_models/" + str(request_id) + "/refined.mtl"
+    filepath = "data/3d_models/" + str(request_id) + f"/{str(num)}/refined.mtl"
     
     if not Path(filepath).exists():
         raise HTTPException(
@@ -162,15 +163,15 @@ def download_mtl(request_id: Union[UUID, str]) -> FileResponse:
             detail="Specified file does not exist"
             )
     
-    return FileResponse(path=filepath, filename="refined_mesh.mtl", media_type="model/mtl")
+    return FileResponse(path=filepath, filename="refined.mtl", media_type="model/mtl")
 
 @router.get("/download/png/{request_id}/{num}", response_class=FileResponse)
-def download_png(request_id: Union[UUID, str]) -> FileResponse:
+def download_png(request_id: Union[UUID, str], num: int) -> FileResponse:
     '''
     Endpoint "/download/obj" allows user to download a given .png file by its id
     '''
     
-    filepath = "data/3d_models/" + str(request_id) + "/refined_albedo.png"
+    filepath = "data/3d_models/" + str(request_id) + f"/{str(num)}/refined_albedo.png"
     
     if not Path(filepath).exists():
         raise HTTPException(
