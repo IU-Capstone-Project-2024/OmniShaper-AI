@@ -1,7 +1,7 @@
 import argparse
 import subprocess
-import trimesh
 import os
+
 
 class ImgTo3dPipeline:
     def __call__(self, name, size):
@@ -9,14 +9,17 @@ class ImgTo3dPipeline:
 
     def run_commands(self, name, size):
         # Run the first command
-        subprocess.run(['python', 'process.py','../' + name, '--size', str(size)])
+        subprocess.run(['python', 'process.py', '../' + name, '--size', str(size)])
 
         # Derive the inputs for the next commands
         name_rgba = '../' + name.replace('.png', '_rgba.png')
         # Need to add folder input
-        save_path = name.replace('data/images/', '').replace('.png', '')
-        save_path = save_path.split('/')[-1]
-        save_path = save_path.split('\\')[-1]
+        save_path = name_rgba.split('/')[-2] + "/" + name_rgba.split('/')[-1].replace('_rgba.png', '') + "/"
+        try:
+            os.mkdir("../data/3d_models/" + name_rgba.split('/')[-2] + "/")
+        except FileExistsError:
+            pass
+
         # Run the second command
         subprocess.run(
             ['python', 'main.py', '--config', 'configs/image_sai.yaml', f'input={name_rgba}', f'save_path={save_path}'])
@@ -25,6 +28,7 @@ class ImgTo3dPipeline:
         subprocess.run(
             ['python', 'main2.py', '--config', 'configs/image_sai.yaml', f'input={name_rgba}',
              f'save_path={save_path}'])
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run a series of Python scripts with specified arguments.')
