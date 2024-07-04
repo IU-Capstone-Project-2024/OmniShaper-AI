@@ -40,7 +40,7 @@ def gen_img_default(prompt: str) -> Create2DRequestResponse:
     request_id = uuid4()
     
     try:
-        generate_images(prompt=prompt, n=num)
+        generate_images(prompt=prompt, n=num, request_id=str(request_id))
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -67,7 +67,7 @@ def gen_img(prompt: str, num: int) -> Create2DRequestResponse:
     request_id = uuid4()
     
     try:
-        generate_images(prompt=prompt, n=num)
+        generate_images(prompt=prompt, n=num, request_id=str(request_id))
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -123,13 +123,13 @@ def download_obj(file_id: Union[UUID, str]) -> StreamingResponse:
     }
 
     return StreamingResponse(_get_data_from_file(filepath), headers=headers, media_type="model/obj")
-@router.get("/download/mtl", response_class=FileResponse)
-def download_mtl(file_id: Union[UUID, str]) -> FileResponse:
+@router.get("/download/mtl/{request_id}/{num}", response_class=FileResponse)
+def download_mtl(request_id: Union[UUID, str], num: int) -> FileResponse:
     '''
     Endpoint "/download/obj" allows user to download a given .mtl file by its id
     '''
     
-    filepath = "data/3d_models/" + str(file_id) + "_mesh.mtl"
+    filepath = "data/3d_models/" + str(request_id) + f"/{str(num)}_mesh.mtl"
     
     if not Path(filepath).exists():
         raise HTTPException(
@@ -137,19 +137,19 @@ def download_mtl(file_id: Union[UUID, str]) -> FileResponse:
             detail="Specified file does not exist"
             )
     
-    return FileResponse(path=filepath, filename=f"{str(file_id)}_mesh.mtl", media_type="model/mtl")
+    return FileResponse(path=filepath, filename=f"{str(request_id)}_mesh.mtl", media_type="model/mtl")
 
-@router.get("/download/png", response_class=FileResponse)
-def download_png(file_id: Union[UUID, str]) -> FileResponse:
+@router.get("/download/png/{request_id}/{num}", response_class=FileResponse)
+def download_png(request_id: Union[UUID, str], num: int) -> FileResponse:
     '''
     Endpoint "/download/obj" allows user to download a given .png file by its id
     '''
     
-    filepath = "data/3d_models/" + str(file_id) + "_mesh_albedo.png"
+    filepath = "data/3d_models/" + str(request_id) + f"/{str(num)}_mesh_albedo.png"
     
     if not Path(filepath).exists():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Specified file does not exist"
             )
-    return FileResponse(path=filepath, filename=f"{str(file_id)}_mesh_albedo.png", media_type="image/png")
+    return FileResponse(path=filepath, filename=f"{str(num)}_mesh_albedo.png", media_type="image/png")
