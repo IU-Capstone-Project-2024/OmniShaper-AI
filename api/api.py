@@ -7,8 +7,7 @@ from typing import Union
 import os
 
 from .models import Create3DRequestResponse, Create2DRequestResponse
-from ml_pipeline.pipeline import promt_to_3D
-from ml_pipeline.prompt_to_img import generate_images
+from ml_pipeline.debug_prompt_to_img import generate_images
 
 
 router = APIRouter()
@@ -76,25 +75,25 @@ def gen_img(prompt: str, num: int) -> Create2DRequestResponse:
     
     return Create2DRequestResponse(prompt=prompt, num=num, request_id=request_id)
 
-@router.get("/request/3D/{prompt}", response_model=Create3DRequestResponse)
-def create_request(prompt: str) -> Create3DRequestResponse:
-    '''
-    The endpint "/request/{prompt}" takes user input, generates file_id, initiates 3D generating process
-    and returns assigned file_id with the used prompt.
-    '''
-    
-    file_id = uuid4()
-
-    try:
-        promt_to_3D(promt=prompt, filename=file_id)
-    except Exception as e:
-        current_dir = os.getcwd()
-        print(os.path.basename(current_dir))
-        print(str(e))
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail="Error occured while creating 3D object. Try again later.")
-
-    return Create3DRequestResponse(file_id=file_id, prompt=prompt)
+# @router.get("/request/3D/{prompt}", response_model=Create3DRequestResponse)
+# def create_request(prompt: str) -> Create3DRequestResponse:
+#     '''
+#     The endpint "/request/{prompt}" takes user input, generates file_id, initiates 3D generating process
+#     and returns assigned file_id with the used prompt.
+#     '''
+#
+#     file_id = uuid4()
+#
+#     try:
+#         promt_to_3D(promt=prompt, filename=file_id)
+#     except Exception as e:
+#         current_dir = os.getcwd()
+#         print(os.path.basename(current_dir))
+#         print(str(e))
+#         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#                             detail="Error occured while creating 3D object. Try again later.")
+#
+#     return Create3DRequestResponse(file_id=file_id, prompt=prompt)
 
 @router.get("/download/obj", response_class=StreamingResponse)
 def download_obj(file_id: Union[UUID, str]) -> StreamingResponse:
