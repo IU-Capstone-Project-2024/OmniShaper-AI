@@ -30,3 +30,7 @@ trimesh
 PyMCubes
 pymeshlab
 rembg[gpu,cli]
+
+#
+pillow
+fastapi
