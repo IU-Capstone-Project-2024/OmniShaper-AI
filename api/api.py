@@ -9,8 +9,8 @@ import base64
 from io import BytesIO
 
 from .models import Create223DRequestResponse, Create2DRequestResponse
-from ml_pipeline.debug_prompt_to_img import generate_images
-from ml_pipeline.debug_img_to_3d import generate_3d_model
+from ml_pipeline.prompt_to_img import generate_images
+from ml_pipeline.img_to_3d import generate_3d_model
 
 router = APIRouter()
 
@@ -85,8 +85,8 @@ def gen_img(prompt: str, num: int) -> Create2DRequestResponse:
             detail="The number must be an integer and bigger than 0"
             )
     
-    request_id = uuid4()
-    
+    # request_id = uuid4()
+    request_id = 312
     try:
         generate_images(prompt=prompt, n=num, request_id=str(request_id))
     except Exception as e:
