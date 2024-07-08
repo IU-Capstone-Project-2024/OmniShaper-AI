@@ -119,8 +119,13 @@ def img_to_3d_request(request_id: Union[UUID, str], num: int):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Requested file does not exist."
         )
-    
-    generate_3d_model(request_id=request_id, image_id=num)
+    try:
+        generate_3d_model(request_id=request_id, image_id=num)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error occured while generating 3d model. Try again later."
+        )
 
     generated_filepath = f"data/3d_models/{str(request_id)}/{str(num)}/"
     img_refined = generated_filepath + "refined_albedo.png"
