@@ -9,8 +9,8 @@ import base64
 from io import BytesIO
 
 from .models import Create223DRequestResponse, Create2DRequestResponse
-from ml_pipeline.prompt_to_img import generate_images
-from ml_pipeline.img_to_3d import generate_3d_model
+from ml_pipeline.debug_prompt_to_img import generate_images
+from ml_pipeline.debug_img_to_3d import generate_3d_model
 
 router = APIRouter()
 
@@ -25,6 +25,11 @@ def _image_to_base64(image_path):
         # Encode the byte array using base64
         img_base64 = base64.b64encode(img_byte_array).decode('utf-8')
         return img_base64
+
+def _file_to_base64(file_path):
+    with open(file_path, "rb") as file:
+        encoded_string = base64.b64encode(file.read()).decode('utf-8')
+    return encoded_string
 
 async def _get_data_from_file(filepath: str) -> AsyncGenerator:
     '''
@@ -86,7 +91,7 @@ def gen_img(prompt: str, num: int) -> Create2DRequestResponse:
             )
     
     # request_id = uuid4()
-    request_id = 312
+    request_id = 312 # test
     try:
         generate_images(prompt=prompt, n=num, request_id=str(request_id))
     except Exception as e:
@@ -107,9 +112,9 @@ def gen_img(prompt: str, num: int) -> Create2DRequestResponse:
 @router.get("/request/3D/{request_id}/{num}", response_model=Create223DRequestResponse)
 def img_to_3d_request(request_id: Union[UUID, str], num: int):
     
-    filepath = f"data/images/{str(request_id)}/{str(num)}.png"
+    img_filepath = f"data/images/{str(request_id)}/{str(num)}.png"
 
-    if not Path(filepath).exists():
+    if not Path(img_filepath).exists():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Requested file does not exist."
@@ -117,7 +122,17 @@ def img_to_3d_request(request_id: Union[UUID, str], num: int):
     
     generate_3d_model(request_id=request_id, image_id=num)
 
-    return Create223DRequestResponse(request_id=request_id, image_id=num)
+    generated_filepath = f"data/3d_models/{str(request_id)}/{str(num)}/"
+    img_refined = generated_filepath + "refined_albedo.png"
+    obj_refined = generated_filepath + "refined.obj"
+    mtl_refined = generated_filepath + "refined.mtl"
+
+    obj_mtl_png = [
+        _file_to_base64(obj_refined),
+        _file_to_base64(mtl_refined),
+        _image_to_base64(img_refined)
+    ]
+    return Create223DRequestResponse(request_id=request_id, image_id=num, obj_mtl_png=obj_mtl_png)
 
 
 @router.get("/download/obj/{request_id}/{num}", response_class=StreamingResponse)

@@ -4,6 +4,7 @@ from PIL import Image
 from io import BytesIO
 import base64
 from typing import List, Union
+# import magic
 
 class Create2DRequestResponse(BaseModel):
     prompt: str
@@ -27,6 +28,22 @@ class Create2DRequestResponse(BaseModel):
 
 
 class Create223DRequestResponse(BaseModel):
-    # TODO: decide on the implementation
     request_id: Union[UUID, int, str]
     image_id: int
+    obj_mtl_png: List[str]
+
+    # @field_validator("obj_mtl_png")
+    # def validate_obj_ntl(cls, v):
+    #     allowed_mimetypes = {'model/obj', 'model/mtl', "image/png"}
+    #     mime = magic.Magic(mime=True)
+    #     for file_like in v:
+    #         content = base64.b64decode(file_like)
+    #         file_type = mime.from_buffer(content)
+    #         if file_type not in allowed_mimetypes:
+    #             raise ValueError("invalid file type.")
+    #     return v
+
+    # class Config:
+    #     arbitrary_types_allowed = True
+    
+    # Right now the validation doesn't work as expected, but... We don't really need it
