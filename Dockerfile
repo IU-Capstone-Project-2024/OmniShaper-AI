@@ -7,6 +7,9 @@ WORKDIR /workspace
 # Avoid interaction
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Install additional requirements for cv2
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+
 # Install necessary packages including Python 3.9
 RUN apt-get update && apt-get install -y \
     build-essential \
