@@ -7,7 +7,7 @@ WORKDIR /workspace
 # Avoid interaction
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install necessary packages including Python 3.9
+# Install necessary packages including Python 3.10
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -16,15 +16,15 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     && add-apt-repository ppa:deadsnakes/ppa \
     && apt-get update && apt-get install -y \
-    python3.9 \
-    python3.9-distutils \
+    python3.10 \
+    python3.10-distutils \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a symlink for python3.9 as python
-RUN ln -s /usr/bin/python3.9 /usr/bin/python
+# Create a symlink for python3.10 as python
+RUN ln -s /usr/bin/python3.10 /usr/bin/python
 
-# Install pip for Python 3.9
+# Install pip for Python 3.10
 RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py
 
 # Set environment variables for CUDA
