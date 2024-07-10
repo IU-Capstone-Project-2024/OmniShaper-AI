@@ -7,9 +7,6 @@ WORKDIR /workspace
 # Avoid interaction
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Install additional requirements for cv2
-RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
-
 # Install necessary packages including Python 3.9
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -34,13 +31,18 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python get-pip.py
 ENV PATH /usr/local/cuda/bin:$PATH
 ENV LD_LIBRARY_PATH /usr/local/cuda/lib64:$LD_LIBRARY_PATH
 
+# Instal python dependencies
+ADD ./requirements.txt /workspace/requirements.txt
+RUN pip install -r requirements.txt
+
 # Copy your application code (if any)
 COPY . /workspace
 
-# Install FastAPI and Uvicorn
-RUN pip install -r /workspace/requirements.txt
-
 RUN python -c "from huggingface_hub import login; login(token='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')"
+
+# Install additional requirements for cv2
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+
 
 # Specify the command to run the FastAPI application
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
