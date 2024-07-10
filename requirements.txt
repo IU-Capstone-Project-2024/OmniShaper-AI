@@ -16,7 +16,6 @@ einops
 plyfile
 pygltflib
 torchvision 
-nvdiffrast
 urllib3
 chardet
 # for stable-diffusion
