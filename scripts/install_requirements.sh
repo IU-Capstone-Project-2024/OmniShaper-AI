@@ -1,5 +1,6 @@
 pip install torch==2.0.1 torchvision==0.15.2 --index-url https://download.pytorch.org/whl/cu118
-pip install -r requirements.txt
+pip install packaging==24.1
+pip install -r requirements_freezed.txt
 
 # a modified gaussian splatting (+ depth, alpha rendering)
 git clone --recursive https://github.com/ashawkey/diff-gaussian-rasterization
@@ -16,3 +17,7 @@ pip install git+https://github.com/ashawkey/kiuikit/
 
 # To use ImageDream, also install:
 pip install git+https://github.com/bytedance/ImageDream/#subdirectory=extern/ImageDream
+
+# directory to home
+# sudo apt update && sudo apt install gcc-11 g++-11
+#sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11 --slave /usr/bin/gcc-ar gcc-ar /usr/bin/gcc-ar-11 --slave /usr/bin/gcc-ranlib gcc-ranlib /usr/bin/gcc-ranlib-11  --slave /usr/bin/cpp cpp /usr/bin/cpp-11;
