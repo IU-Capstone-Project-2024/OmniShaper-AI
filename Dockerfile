@@ -38,5 +38,7 @@ RUN cd /home/user/workspace && sh scripts/install_requirements.sh
 # Add huggingface token
 RUN python -c "from huggingface_hub import login; login(token='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')"
 
+CMD ["pip", "install", "diff-gaussian-rasterization/"]
+
 # Specify the command to run the FastAPI application
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
