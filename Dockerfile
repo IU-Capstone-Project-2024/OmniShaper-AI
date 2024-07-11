@@ -25,7 +25,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install --yes --quiet --no-install-re
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 999 \
     && update-alternatives --config python3 && ln -s /usr/bin/python3 /usr/bin/python
 
-
 # ------------------------OmniShaper------------------------
 # Install additional requirements for cv2
 RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
@@ -33,10 +32,12 @@ RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 # Copy the application code
 ADD . /home/user/workspace
 
-RUN cd /home/user/workspace && sh scripts/install_requirements.sh
+RUN pip install torch==2.0.1 torchvision==0.15.2 --index-url https://download.pytorch.org/whl/cu118
+RUN pip install packaging==24.1
+RUN pip install -r /home/user/workspace/requirements_freezed.txt
 
-# Add huggingface token
-RUN python -c "from huggingface_hub import login; login(token='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')"
+# # Add huggingface token
+# RUN python -c "from huggingface_hub import login; login(token='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')"
 
-# Specify the command to run the FastAPI application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# # Specify the command to run the FastAPI application
+# CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
