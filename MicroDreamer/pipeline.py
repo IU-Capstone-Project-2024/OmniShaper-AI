@@ -39,26 +39,26 @@ class ImgTo3dPipeline:
             file_contents = file.read()
 
         # Replace the old string with the new string
-        updated_contents = file_contents.replace('material0.mtl', f'{directory}/{name_of_file}' + '.mtl')
-        updated_contents = updated_contents.replace('material0', f'{directory}/{name_of_file}')
+        updated_contents = file_contents.replace('material.mtl', f'{directory}/{name_of_file}' + '.mtl')
+        updated_contents = updated_contents.replace('material_0', f'{directory}/{name_of_file}_albedo')
 
         # Write the modified contents back to the file
         with open(f'../data/3d_models/{directory}/{name_of_file}.obj', 'w') as file:
             file.write(updated_contents)
 
-        with open(f'../data/3d_models/{directory}/material0.mtl', 'r') as file:
+        with open(f'../data/3d_models/{directory}/material.mtl', 'r') as file:
             file_contents = file.read()
 
         # Replace the old string with the new string
-        updated_contents = file_contents.replace('material0.png', f'{directory}/{name_of_file}_albedo.png')
-        updated_contents = updated_contents.replace('material0', f'{directory}/{name_of_file}_albedo')
+        updated_contents = file_contents.replace('material_0.png', f'{directory}/{name_of_file}_albedo.png')
+        updated_contents = updated_contents.replace('material_0', f'{directory}/{name_of_file}_albedo')
 
         # Write the modified contents back to the file
-        with open(f'../data/3d_models/{directory}/material0.mtl', 'w') as file:
+        with open(f'../data/3d_models/{directory}/material.mtl', 'w') as file:
             file.write(updated_contents)
 
-        os.rename(f'../data/3d_models/{directory}/material0.mtl', f'../data/3d_models/{directory}/{name_of_file}.mtl')
-        os.rename(f'../data/3d_models/{directory}/material0.png', f'../data/3d_models/{directory}/{name_of_file}_albedo.png')
+        os.rename(f'../data/3d_models/{directory}/material.mtl', f'../data/3d_models/{directory}/{name_of_file}.mtl')
+        os.rename(f'../data/3d_models/{directory}/material_0.png', f'../data/3d_models/{directory}/{name_of_file}_albedo.png')
         # os.remove(f'../data/3d_models/{save_path}.obj')
         # os.remove(f'../data/3d_models/{save_path}.mtl')
         # os.remove(f'../data/3d_models/{save_path}_albedo.png')
