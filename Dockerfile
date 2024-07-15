@@ -36,8 +36,8 @@ RUN pip install torch==2.0.1 torchvision==0.15.2 --index-url https://download.py
 RUN pip install packaging==24.1
 RUN pip install -r /home/user/workspace/requirements_freezed.txt
 
-# # Add huggingface token
-# RUN python -c "from huggingface_hub import login; login(token='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')"
+# Add huggingface token
+RUN python -c "from huggingface_hub import login; login(token='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')"
 
 # # Specify the command to run the FastAPI application
 # CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
