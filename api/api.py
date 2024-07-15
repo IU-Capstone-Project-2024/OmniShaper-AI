@@ -122,6 +122,7 @@ def img_to_3d_request(request_id: Union[UUID, str], num: int):
     try:
         generate_3d_model(request_id=request_id, image_id=num)
     except Exception as e:
+        print(e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error occured while generating 3d model. Try again later."

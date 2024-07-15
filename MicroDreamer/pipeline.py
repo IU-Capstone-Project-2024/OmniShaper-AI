@@ -1,7 +1,7 @@
 import argparse
 import subprocess
 import os
-
+import trimesh
 
 class ImgTo3dPipeline:
     def __call__(self, name, size):
@@ -27,6 +27,41 @@ class ImgTo3dPipeline:
         # Run the third command
         subprocess.run(
             ['python', 'main2.py', '--config', 'configs/image_sai.yaml', f'input={name_rgba}', f'save_path={save_path}'])
+
+        # Repair 3d object
+        directory = '/'.join(save_path.split('/')[:-1])
+        name_of_file = 'refined'
+        model = trimesh.load(f'../data/3d_models/{directory}/{name_of_file}.obj')
+        model.export(f'../data/3d_models/{directory}/{name_of_file}.obj')
+        os.remove(f'../data/3d_models/{directory}/{name_of_file}.mtl')
+        os.remove(f'../data/3d_models/{directory}/{name_of_file}_albedo.png')
+        with open(f'../data/3d_models/{directory}/{name_of_file}.obj', 'r') as file:
+            file_contents = file.read()
+
+        # Replace the old string with the new string
+        updated_contents = file_contents.replace('material0.mtl', f'{directory}/{name_of_file}' + '.mtl')
+        updated_contents = updated_contents.replace('material0', f'{directory}/{name_of_file}')
+
+        # Write the modified contents back to the file
+        with open(f'../data/3d_models/{directory}/{name_of_file}.obj', 'w') as file:
+            file.write(updated_contents)
+
+        with open(f'../data/3d_models/{directory}/material0.mtl', 'r') as file:
+            file_contents = file.read()
+
+        # Replace the old string with the new string
+        updated_contents = file_contents.replace('material0.png', f'{directory}/{name_of_file}_albedo.png')
+        updated_contents = updated_contents.replace('material0', f'{directory}/{name_of_file}_albedo')
+
+        # Write the modified contents back to the file
+        with open(f'../data/3d_models/{directory}/material0.mtl', 'w') as file:
+            file.write(updated_contents)
+
+        os.rename(f'../data/3d_models/{directory}/material0.mtl', f'../data/3d_models/{directory}/{name_of_file}.mtl')
+        os.rename(f'../data/3d_models/{directory}/material0.png', f'../data/3d_models/{directory}/{name_of_file}_albedo.png')
+        # os.remove(f'../data/3d_models/{save_path}.obj')
+        # os.remove(f'../data/3d_models/{save_path}.mtl')
+        # os.remove(f'../data/3d_models/{save_path}_albedo.png')
 
 
 if __name__ == '__main__':
