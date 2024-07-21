@@ -39,8 +39,8 @@ class ImgTo3dPipeline:
             file_contents = file.read()
 
         # Replace the old string with the new string
-        updated_contents = file_contents.replace('material.mtl', f'{directory}/{name_of_file}' + '.mtl')
-        updated_contents = updated_contents.replace('material_0', f'{directory}/{name_of_file}_albedo')
+        updated_contents = file_contents.replace('material.mtl', f'{name_of_file}' + '.mtl')
+        updated_contents = updated_contents.replace('material_0', f'{name_of_file}_albedo')
 
         # Write the modified contents back to the file
         with open(f'../data/3d_models/{directory}/{name_of_file}.obj', 'w') as file:
@@ -50,8 +50,8 @@ class ImgTo3dPipeline:
             file_contents = file.read()
 
         # Replace the old string with the new string
-        updated_contents = file_contents.replace('material_0.png', f'{directory}/{name_of_file}_albedo.png')
-        updated_contents = updated_contents.replace('material_0', f'{directory}/{name_of_file}_albedo')
+        updated_contents = file_contents.replace('material_0.png', f'{name_of_file}_albedo.png')
+        updated_contents = updated_contents.replace('material_0', f'{name_of_file}_albedo')
 
         # Write the modified contents back to the file
         with open(f'../data/3d_models/{directory}/material.mtl', 'w') as file:
