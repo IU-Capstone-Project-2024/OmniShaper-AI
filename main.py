@@ -1,8 +1,12 @@
 import api
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from fastapi_limiter import FastAPILimiter
+from fastapi_limiter.depends import RateLimiter
+
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+# User can send only 1 request per 3 seconds
+app = FastAPI(dependencies=[Depends(RateLimiter(times=1, seconds=3))])
 
 app.include_router(api.router)
 

@@ -37,4 +37,5 @@ rembg[gpu,cli]
 #
 pillow
 fastapi
+fastapi_limiter
 uvicorn
