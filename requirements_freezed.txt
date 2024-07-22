@@ -215,3 +215,4 @@ xformers==0.0.22
 xxhash==3.4.1
 yarl==1.9.4
 zipp==3.19.2
+fastapi_limiter==0.1.6
