@@ -1,9 +1,12 @@
 import torch
 from diffusers import StableDiffusion3Pipeline
 import os
+from typing import List
+
+from api.api_utils import convert_images
 
 
-def generate_images(prompt, n, request_id, negative_prompt="", num_inference_steps=30, guidance_scale=8):
+def generate_images(prompt, n, request_id, negative_prompt="", num_inference_steps=30, guidance_scale=8) -> List[str]:
     """
     This function generates images for a prompt.
     Args:
@@ -15,7 +18,7 @@ def generate_images(prompt, n, request_id, negative_prompt="", num_inference_ste
         guidance_scale:
 
     Returns:
-        Array of pil images. Also saves images to data/images/request_id/
+        List of encoded images to transfer
     """
     images = []
 
@@ -52,4 +55,5 @@ def generate_images(prompt, n, request_id, negative_prompt="", num_inference_ste
     # clear cuda memory by deleting a pipe
     del pipe
 
-    return images
+
+    return convert_images(request_id=request_id, image_id=n)

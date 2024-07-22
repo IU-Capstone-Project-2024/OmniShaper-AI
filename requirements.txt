@@ -38,4 +38,7 @@ rembg[gpu,cli]
 pillow
 fastapi
 fastapi_limiter
+redis
+rq
+websockets
 uvicorn

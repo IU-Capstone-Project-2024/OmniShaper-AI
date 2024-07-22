@@ -1,9 +1,10 @@
 from MicroDreamer.pipeline import ImgTo3dPipeline
 import os
 import warnings
+from api.api_utils import convert_files
+from typing import List
 
-
-def generate_3d_model(request_id, image_id) -> str:
+def generate_3d_model(request_id, image_id) -> List[str]:
     warnings.filterwarnings("ignore")
 
     try:
@@ -31,4 +32,5 @@ def generate_3d_model(request_id, image_id) -> str:
     if os.path.basename(current_dir) == target_dir:
         os.chdir('..')
     print(os.path.basename(os.getcwd()))
-    return f'data/3d_models/{filename}.obj'
+
+    return convert_files(request_id=request_id, image_id=image_id)
